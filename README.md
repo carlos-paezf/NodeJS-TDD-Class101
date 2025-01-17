@@ -32,7 +32,7 @@ npm init -y
 En nuestro ejemplo solo necesitaremos la instalación de dependencias para el modo de desarrollo, dado que el plan de TDD es ir implementando a medida que desarrollamos el código.
 
 ```bash
-pnpm install --save-dev jest nyc
+pnpm install --save-dev jest
 ```
 
 Por último, configuramos los scripts para ejecutar el proyecto desde consola (`start`), y para correr los test (`test`):
@@ -44,7 +44,7 @@ Por último, configuramos los scripts para ejecutar el proyecto desde consola (`
     ...
     "scripts": {
         "start": "node src/index.js",
-        "test": "nyc npx jest"
+        "test": "npx jest"
     },
     ...
 }
