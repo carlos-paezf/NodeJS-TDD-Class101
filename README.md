@@ -4,7 +4,7 @@
 
 ## ¿Qué es y por qué usar TDD?
 
-El Desarrollo Guiado por Test (TDD por sus siglas en inglés), es una forma de desarrollar código, en el cual los test son escritos primero y entonce el código se construye para que el test pueda pasar.
+El Desarrollo Guiado por Pruebas (TDD por sus siglas en inglés), es una forma de desarrollar código, en el cual los test son escritos primero y entonce el código se construye para que el test pueda pasar.
 
 El TDD se conforma de 3 pasos:
 
@@ -319,3 +319,31 @@ describe("Avanzado - Interactividad con Node.js", () => {
     });
 });
 ```
+
+## Cierre y reflexión
+
+En esta sesión, hemos explorado cómo el Desarrollo Guiado por Pruebas (TDD) puede transformar nuestra forma de programar y mejorar la calidad del código que escribimos. Para resumir, TDD nos ofrece los siguientes beneficios:
+
+- *Pensar primero, codificar después*: Nos obliga a definir claramente los requisitos antes de escribir una sola línea de código. Esto nos ayuda a mantener el enfoque en lo que realmente importa.
+- *Confianza en el código*: Tener un conjunto de pruebas confiables significa que siempre podemos verificar que nuestro programa funciona como se espera, incluso después de realizar cambios.
+- *Documentación implícita*: Las pruebas no solo verifican, también sirven como una guía que explica cómo debería comportarse nuestro código, incluso en los casos más inusuales.
+
+Además, hemos visto cómo TDD nos ayuda a entender y documentar comportamientos curiosos de JavaScript. Algunos de estos comportamientos pueden parecer extraños al principio, pero con la práctica y el uso de pruebas podemos convertirlos en oportunidades para aprender y mejorar nuestro código.
+
+### Tarea para Reflexionar y Practicar
+
+Tu misión es escribir pruebas para otros comportamientos curiosos de JavaScript que encuentres. Algunos puntos que puedes explorar:
+
+- Operaciones inusuales con tipos de datos (+, -, comparaciones, coerciones).
+- Casos que mezclen objetos y arrays en operaciones matemáticas o lógicas.
+- Comportamientos inesperados al usar valores como null, undefined o NaN.
+
+### Puntos Clave para Llevarse
+
+- *JavaScript es poderoso, pero también flexible*: Esa flexibilidad es útil, pero puede generar errores si no tenemos cuidado.
+- *Validar y convertir tipos*: Es una práctica esencial para prevenir comportamientos inesperados.
+- *Curiosidad constante*: Explorar y documentar comportamientos curiosos con pruebas es una excelente forma de aprender y crecer como desarrolladores.
+
+### Ejemplos adicionales
+
+Para algunos ejemplos adicionales separados en dificultades, puedes consultar mi repositorio [Test Driven Development (TDD) con Mocha en Node con TS](https://github.com/carlos-paezf/Node-TS-TDD?tab=readme-ov-file).
