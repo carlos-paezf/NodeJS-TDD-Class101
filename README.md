@@ -49,3 +49,273 @@ Por último, configuramos los scripts para ejecutar el proyecto desde consola (`
     ...
 }
 ```
+
+## Vamos con el ejemplo
+
+El siguiente ejemplo será algo pequeño pero que nos servirá para entender cómo ir aplicando el TDD, el cual nos ayuda a construir el juego de manera incremental, e incluso cómo nuestros inputs pueden interactuar con la aplicación.
+
+***Descripción:*** El programa genera un número aleatorio entre 1 y 100. El jugador intenta adivinarlo, y el programa responde con mensajes según la comparación.
+
+### Paso 1: Crear el esqueleto del código principal
+
+```js
+class GuessingGame {
+    /**
+     * El constructor define cual sería el número objetivo el cual es 
+     * generado de manera aleatoria
+     */
+    constructor () {
+        this.target = this.generateNumber();
+    }
+
+    /**
+     * @returns: Un número aleatorio entre 1 y 100 
+     */
+    generateNumber () { }
+
+    /**
+     * @param number: El número que el usuario ingresa 
+     * @returns: Indica si el número del usuario es más alto, más bajo 
+     * o es igual al número aleatorio del programa
+     */
+    guess (number) { }
+}
+
+module.exports = GuessingGame;
+```
+
+### Paso 2: Definir el suit de los tests
+
+La primera parte es definir el scope teórico de las pruebas, es decir, delimitar de manera textual un set de n pruebas:
+
+```js
+const GuessingGame = require("../src");
+
+describe("Juego de Adivinanza de Números", () => {
+    //...
+});
+```
+
+### Paso 3: Crear los test de los casos posibles
+
+Nuestro siguiente objetivo es definir los test mediante los cuales vamos a validar que el output sea lo que esperamos, debemos tener en cuenta que se deben encontrar dentro del cuerpo de la función anónima del método `describe` que recibe en su segundo parámetro:
+
+1. Validar que el número aleatorio se genere en el rango correcto:
+
+   ```js
+   describe("Juego de Adivinanza de Números", () => {
+       it("Debe generar un número entre 1 y 100", () => {
+           const game = new GuessingGame();
+           const number = game.generateNumber();
+
+           expect(number).toBeGreaterThanOrEqual(1);
+           expect(number).toBeLessThanOrEqual(100);
+       });
+   });
+   ```
+
+2. Responder con el mensaje adecuado según cada caso:
+
+   ```js
+   describe("Juego de Adivinanza de Números", () => {
+       it("Debe responder 'muy alto' si la adivinanza es mayor al número objetivo", () => {
+           const game = new GuessingGame();
+           game.target = 50;
+
+           expect(game.guess(60)).toBe("muy alto");
+       });
+   });
+   ```
+
+   ```js
+   describe("Juego de Adivinanza de Números", () => {
+       it("Debe responder 'muy bajo' si la adivinanza es menor al objetivo", () => {
+           const game = new GuessingGame();
+           game.target = 50;
+
+           expect(game.guess(30)).toBe("muy bajo");
+       })
+   });
+   ```
+
+   ```js
+   describe("Juego de Adivinanza de Números", () => {
+       it("Debe responder 'correcto' si la adivinanza coincide con el objetivo", () => {
+           const game = new GuessingGame();
+           game.target = 50;
+
+           expect(game.guess(50)).toBe("correcto");
+       });
+   });
+   ```
+
+Cuando ejecutamos los test con el comando `npm run test`, vamos a observar cómo fallan las pruebas y analizar los resultados, en este caso, los valores en verde representan los valores recibidos, mientras que el color rojo se asigna a la respuesta del código testeado.
+
+### Paso 4: Optimizar el código de los test
+
+Si revisamos los test, en cada uno de ellos vamos a crear una instancia de la clase `GuessingGame`, y luego forzamos el número objetivo en los últimos 3 test. Dado que es código que se repite en cada prueba, podemos usar la función `beforeEach` y establecer algunas acciones que se deben ejecutar antes de cada prueba, mejorando así la **Legibilidad** y **Mantenibilidad** del script de test.
+
+Por ejemplo, así se verá el código mejorado con los 2 primeros test:
+
+```js
+describe("Juego de Adivinanza de Números", () => {
+    let game;
+
+    beforeEach(() => {
+        game = new GuessingGame();
+        game.target = 50;
+    });
+
+    it("Debe generar un número entre 1 y 100", () => {
+        const number = game.generateNumber();
+
+        expect(number).toBeGreaterThanOrEqual(1);
+        expect(number).toBeLessThanOrEqual(100);
+    });
+
+    it("Debe responder 'muy alto' si la adivinanza es mayor al número objetivo", () => {
+        expect(game.guess(60)).toBe("muy alto");
+    });
+    ...
+});
+```
+
+### Paso 5: Implementación gradual
+
+Para implementar la clase `GuessingGame` de manera gradual, podemos comenzar a definir las acciones del método `generateNumber()`, y que deben cumplir con el requerimiento del primer test definido:
+
+```js
+class GuessingGame {
+    ...
+    generateNumber () {
+        return Math.floor(Math.random() * 100) + 1;
+    }
+}
+```
+
+Cuando volvemos a correr los test, podemos observar que hemos logrado pasar el primer test, pero aún fallan los otros 3, por lo tanto, seguimos con el código.
+
+El siguiente paso es definir el comportamiento de la función `guess`. Dado que es un ejemplo simple, podemos establecer todos los caminos de los condicionales, pero en algunos casos de prueba se nos puede presentar la situación de que debemos crear el código para pasar diferentes test que añaden funcionalidades diferentes al mismo método.
+
+```js
+class GuessingGame {
+    ...
+    guess (number) {
+        if (number < this.target) return "muy bajo";
+        else if (number > this.target) return "muy alto";
+        return "correcto";
+    }
+}
+```
+
+Al momento de ejecutar el test suit, observamos que todos los test han pasado correctamente.
+
+### Paso 6: Refactorizar
+
+En este punto podemos volver a leer nuestro código y analizar se podemos aplicar mejoras, por ejemplo:
+
+- Creación de métodos y atributos privados
+- Mejorar o añadir comentarios para los métodos o líneas especificas del código
+- Mejorar la extensibilidad de la clase para incluir nuevos rangos o lógicas personalizadas.
+
+### Extra: Interactividad con Node.js
+
+En este bonus quiero utilizar el módulo `readline` para que el usuario pueda interactuar con el juego:
+
+```js
+const readline = require('readline');
+
+class GuessingGame {
+    ...
+    play () {
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        });
+
+        console.log("¡Bienvenido al Juego de Adivinanza de Números!");
+        console.log("Adivina ún número entre 1 y 100");
+
+        const ask = () => {
+            rl.question('¿Cuál es tu número?', (input) => {
+                const guess = parseInt(input, 10);
+
+                if (isNaN(guess)) {
+                    console.log("Por favor, ingresa un número válido.");
+                    ask();
+                    return;
+                }
+
+                const response = game.guess(guess);
+                console.log(response);
+
+                if (response === 'correcto') {
+                    console.log("¡Felicidades, ganaste!");
+                    rl.close();
+                } else {
+                    ask();
+                }
+            });
+        };
+
+        ask();
+    }
+}
+
+module.exports = GuessingGame;
+
+
+const game = new GuessingGame();
+game.play();
+```
+
+Aquí surge una actividad: **¡Apliquemos TDD!**. Claro, este ejemplo es solo algo introductorio, pero si hubiésemos aplicado TDD antes de desarrollar esta funcionalidad bonus, tendríamos algo similar a lo siguiente:
+
+```js
+describe("Avanzado - Interactividad con Node.js", () => {
+    let game;
+    let mockQuestion;
+    let mockClose;
+
+    beforeEach(() => {
+        game = new GuessingGame();
+        game.target = 50;
+
+        mockQuestion = jest.fn();
+        mockClose = jest.fn();
+
+        jest.spyOn(require("readline"), "createInterface").mockReturnValue({
+            question: mockQuestion,
+            close: mockClose,
+        });
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
+    it("Debe iniciar el juego y responder 'correcto' cuando el usuario acierte", () => {
+        mockQuestion.mockImplementationOnce((prompt, callback) => {
+            expect(prompt).toBe("¿Cuál es tu número?");
+            callback("50");
+        });
+
+        game.play();
+
+        expect(mockQuestion).toHaveBeenCalled();
+        expect(mockClose).toHaveBeenCalled();
+    });
+
+    it("Debe continuar preguntando cuando la entrada es inválida o incorrecta", () => {
+        mockQuestion
+            .mockImplementationOnce((prompt, callback) => callback("not a number"))
+            .mockImplementationOnce((prompt, callback) => callback("30"))
+            .mockImplementationOnce((prompt, callback) => callback("50"));
+
+        game.play();
+
+        expect(mockQuestion).toHaveBeenCalledTimes(3);
+        expect(mockClose).toHaveBeenCalled();
+    });
+});
+```
